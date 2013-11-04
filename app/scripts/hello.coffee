@@ -7,8 +7,11 @@ class Stage extends PIXI.Stage
 		@renderer = PIXI.autoDetectRenderer WIDTH, HEIGHT
 
 	center: (anObject) =>
-		anObject.position.x = WIDTH / 2
-		anObject.position.y = HEIGHT / 2
+		anObject.position.x = @width() / 2
+		anObject.position.y = @height() / 2
+
+	width: -> @renderer.width
+	height: -> @renderer.height		
 
 	update: =>
 		@renderer.render @
@@ -24,7 +27,7 @@ class Stage extends PIXI.Stage
 		anObject.position.x - anObject.width / 2 < @position.x
 
 	collidesOnRight: (anObject) =>
-		anObject.position.x + anObject.width / 2 > @position.x + WIDTH
+		anObject.position.x + anObject.width / 2 > @position.x + @width()
 
 class PokeBall extends PIXI.Sprite
 	constructor: (@stage, @speed) ->
@@ -53,7 +56,7 @@ class PokeBall extends PIXI.Sprite
 
 stage = new Stage()
 
-document.getElementById("container").appendChild stage.renderer.view
+document.getElementById("bouncing-ball").appendChild stage.renderer.view
 
 pokeBall = new PokeBall stage, -5
 
