@@ -19,7 +19,8 @@ class Stage extends PIXI.Stage
 	width: -> @renderer.width
 	height: -> @renderer.height		
 
-	update: =>
+	render: =>
+		@children.forEach (it) -> it.render()
 		@renderer.render @
 
 	addChildCentered: (aChild) =>
@@ -77,6 +78,10 @@ class PokeBall extends PIXI.Sprite
 	flip: (coordinate) => 
 		@speed[coordinate] *= -1
 
+	render: ->
+		@rotateLeft()
+		@move()		
+
 class Game
 	constructor: (@render) ->
 
@@ -93,7 +98,7 @@ class Counter extends PIXI.Text
 
 	count: => @elements.length		
 
-	update: => @setText @label + @count()
+	render: => @setText @label + @count()
 
 stage = new Stage()
 stage.onClick -> pokeBalls.push stage.addChildCentered(new PokeBall())
@@ -105,11 +110,4 @@ pokeBalls = [ stage.addChildCentered new PokeBall() ]
 ballsCounter = new Counter pokeBalls, "Balls: "
 stage.addChild ballsCounter
 
-new Game( ->
-	pokeBalls.forEach (it) ->
-		it.rotateLeft()
-		it.move()
-
-	ballsCounter.update()
-	stage.update()
-).start()
+new Game( -> stage.render()).start()
