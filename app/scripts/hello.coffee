@@ -45,7 +45,7 @@ class Stage extends PIXI.Stage
 		$(@view()).click action
 
 class PokeBall extends PIXI.Sprite
-	constructor: () ->
+	constructor: ->
 		texture = PIXI.Texture.fromImage("../images/poke.png")
 		super texture		
 
@@ -68,10 +68,10 @@ class PokeBall extends PIXI.Sprite
 		@position.x += @speed.x
 		@position.y += @speed.y
 
-		if stage.collidesOnLeft(@) || stage.collidesOnRight(@)
+		if @stage.collidesOnLeft(@) || @stage.collidesOnRight(@)
 			@flip 'x'
 
-		if stage.collidesOnTop(@) || stage.collidesOnBottom(@)
+		if @stage.collidesOnTop(@) || @stage.collidesOnBottom(@)
 			@flip 'y'
 
 	flip: (coordinate) => 
