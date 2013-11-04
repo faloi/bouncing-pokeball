@@ -54,15 +54,23 @@ class PokeBall extends PIXI.Sprite
 
 	flip: => @speed *= -1
 
+class Game
+	constructor: (@render) ->
+
+	start: =>
+		gameLoop = =>
+		  requestAnimFrame gameLoop
+		  @render()
+
+		requestAnimFrame gameLoop			
+
 stage = new Stage()
 
 document.getElementById("bouncing-ball").appendChild stage.renderer.view
 
 pokeBall = new PokeBall stage, -5
 
-gameLoop = ->
-  requestAnimFrame gameLoop
+new Game( ->
   pokeBall.rotateLeft()
   pokeBall.move()
-
-requestAnimFrame gameLoop
+).start()
