@@ -32,8 +32,13 @@ class Stage extends PIXI.Stage
 	collidesOnRight: (anObject) =>
 		anObject.position.x + anObject.width / 2 > @position.x + @width()
 
+	view: => @renderer.view
+
+	onClick: (action) =>
+		$(@view()).click action
+
 class PokeBall extends PIXI.Sprite
-	constructor: (@stage, @speed) ->
+	constructor: (@speed) ->
 		texture = PIXI.Texture.fromImage("../images/poke.png")
 		super texture		
 
@@ -45,7 +50,6 @@ class PokeBall extends PIXI.Sprite
 
 	rotateLeft: => 
 		@rotation -= 0.06
-		@stage.update()
 
 	move: =>
 		@position.x += @speed.x
@@ -56,8 +60,6 @@ class PokeBall extends PIXI.Sprite
 
 		if stage.collidesOnTop(@) || stage.collidesOnBottom(@)
 			@flip 'y'
-
-		@stage.update()
 
 	flip: (coordinate) => 
 		@speed[coordinate] *= -1
@@ -73,14 +75,21 @@ class Game
 		requestAnimFrame gameLoop			
 
 stage = new Stage()
+stage.onClick -> 
+	pokeBalls.push(new PokeBall x: -5, y: -5)
 
-document.getElementById("bouncing-ball").appendChild stage.renderer.view
+document.getElementById("bouncing-ball").appendChild stage.view()
 
-pokeBall = new PokeBall stage, 
-	x: -10
-	y: 10
+pokeBalls = [
+	new PokeBall
+		x: -10
+		y: 10
+]
 
 new Game( ->
-  pokeBall.rotateLeft()
-  pokeBall.move()
+	pokeBalls.forEach (it) ->
+		it.rotateLeft()
+		it.move()
+
+	stage.update()
 ).start()
