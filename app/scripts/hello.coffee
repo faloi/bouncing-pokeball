@@ -20,18 +20,21 @@ class Stage extends PIXI.Stage
 		@center aChild
 		@addChild aChild
 
-	collidesWith: (anObject) =>
-		@collidesOnLeft(anObject) || @collidesOnRight(anObject)
-
 	collidesOnLeft: (anObject) =>
 		anObject.position.x - anObject.width / 2 < @position.x
+
+	collidesOnTop: (anObject) =>
+		anObject.position.y - anObject.width / 2 < @position.y
+
+	collidesOnBottom: (anObject) =>
+		anObject.position.y + anObject.width / 2 > @position.y + @height()
 
 	collidesOnRight: (anObject) =>
 		anObject.position.x + anObject.width / 2 > @position.x + @width()
 
 class PokeBall extends PIXI.Sprite
 	constructor: (@stage, @speed) ->
-		texture = PIXI.Texture.fromImage("../images/Poke%20Ball.png")
+		texture = PIXI.Texture.fromImage("../images/poke.png")
 		super texture		
 
 		# rotate around center
@@ -45,14 +48,19 @@ class PokeBall extends PIXI.Sprite
 		@stage.update()
 
 	move: =>
-		@position.x += @speed
+		@position.x += @speed.x
+		@position.y += @speed.y
 
-		if @stage.collidesWith @
-			@flip()
+		if stage.collidesOnLeft(@) || stage.collidesOnRight(@)
+			@flip 'x'
+
+		if stage.collidesOnTop(@) || stage.collidesOnBottom(@)
+			@flip 'y'
 
 		@stage.update()
 
-	flip: => @speed *= -1
+	flip: (coordinate) => 
+		@speed[coordinate] *= -1
 
 class Game
 	constructor: (@render) ->
@@ -68,7 +76,9 @@ stage = new Stage()
 
 document.getElementById("bouncing-ball").appendChild stage.renderer.view
 
-pokeBall = new PokeBall stage, -5
+pokeBall = new PokeBall stage, 
+	x: -10
+	y: 10
 
 new Game( ->
   pokeBall.rotateLeft()
