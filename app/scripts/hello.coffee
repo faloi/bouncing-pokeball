@@ -1,3 +1,9 @@
+class Randomizer
+	constructor: (@min, @max) ->
+
+	get: =>
+  		Math.floor Math.random() * (@max - @min + 1) + @min
+
 class Stage extends PIXI.Stage
 	WIDTH = 1024
 	HEIGHT = 600
@@ -38,7 +44,7 @@ class Stage extends PIXI.Stage
 		$(@view()).click action
 
 class PokeBall extends PIXI.Sprite
-	constructor: (@speed) ->
+	constructor: () ->
 		texture = PIXI.Texture.fromImage("../images/poke.png")
 		super texture		
 
@@ -46,7 +52,15 @@ class PokeBall extends PIXI.Sprite
 		@anchor.x = 0.5
 		@anchor.y = 0.5
 
+		@randomizeSpeed()
+
 		stage.addChildCentered @
+
+	randomizeSpeed: =>
+		randomizer = new Randomizer -10, 10
+		@speed =
+			x: randomizer.get()
+			y: randomizer.get()
 
 	rotateLeft: => 
 		@rotation -= 0.06
@@ -75,16 +89,11 @@ class Game
 		requestAnimFrame gameLoop			
 
 stage = new Stage()
-stage.onClick -> 
-	pokeBalls.push(new PokeBall x: -5, y: -5)
+stage.onClick -> pokeBalls.push new PokeBall()
 
 document.getElementById("bouncing-ball").appendChild stage.view()
 
-pokeBalls = [
-	new PokeBall
-		x: -10
-		y: 10
-]
+pokeBalls = [ new PokeBall() ]
 
 new Game( ->
 	pokeBalls.forEach (it) ->
