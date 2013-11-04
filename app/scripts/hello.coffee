@@ -5,8 +5,8 @@ class Randomizer
   		Math.floor Math.random() * (@max - @min + 1) + @min
 
 class Stage extends PIXI.Stage
-	WIDTH = 1024
-	HEIGHT = 600
+	WIDTH = 1300
+	HEIGHT = 800
 
 	constructor: ->
 		super 0x0
@@ -25,6 +25,7 @@ class Stage extends PIXI.Stage
 	addChildCentered: (aChild) =>
 		@center aChild
 		@addChild aChild
+		aChild
 
 	collidesOnLeft: (anObject) =>
 		anObject.position.x - anObject.width / 2 < @position.x
@@ -53,8 +54,6 @@ class PokeBall extends PIXI.Sprite
 		@anchor.y = 0.5
 
 		@randomizeSpeed()
-
-		stage.addChildCentered @
 
 	randomizeSpeed: =>
 		randomizer = new Randomizer -10, 10
@@ -88,17 +87,29 @@ class Game
 
 		requestAnimFrame gameLoop			
 
+class Counter extends PIXI.Text
+	constructor: (@elements, @label) ->
+		super label, fill: "white"
+
+	count: => @elements.length		
+
+	update: => @setText @label + @count()
+
 stage = new Stage()
-stage.onClick -> pokeBalls.push new PokeBall()
+stage.onClick -> pokeBalls.push stage.addChildCentered(new PokeBall())
 
 document.getElementById("bouncing-ball").appendChild stage.view()
 
-pokeBalls = [ new PokeBall() ]
+pokeBalls = [ stage.addChildCentered new PokeBall() ]
+
+ballsCounter = new Counter pokeBalls, "Balls: "
+stage.addChild ballsCounter
 
 new Game( ->
 	pokeBalls.forEach (it) ->
 		it.rotateLeft()
 		it.move()
 
+	ballsCounter.update()
 	stage.update()
 ).start()
