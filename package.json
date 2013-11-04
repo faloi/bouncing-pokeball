@@ -1,7 +1,12 @@
 {
   "name": "bouncing-pokeball",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "grunt": "~0.4.1",    
+  },
+  "scripts": {
+    "postinstall": "./node_modules/grunt/bin/grunt"
+  },  
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-copy": "~0.4.1",
